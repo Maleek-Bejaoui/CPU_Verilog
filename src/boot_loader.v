@@ -5,7 +5,7 @@ module word_2_byte
    input  word_dv,
    input  [15:0] word,
    output byte_dv,
-   output [7:0] byte);
+   output [7:0] byteee);
   wire word_dv_dly;
   wire word_dv_dly2;
   wire [15:0] word_reg;
@@ -18,7 +18,7 @@ module word_2_byte
   reg n746_q;
   reg [15:0] n747_q;
   assign byte_dv = n744_o;
-  assign byte = n742_o;
+  assign byteee = n742_o;
   /* word_2_byte.vhd:44:12  */
   assign word_dv_dly = n745_q; // (signal)
   /* word_2_byte.vhd:44:25  */
@@ -60,7 +60,7 @@ module byte_2_word
    input  clk,
    input  ce,
    input  byte_dv,
-   input  [7:0] byte,
+   input  [7:0] byteee,
    output word_dv,
    output [15:0] word);
   wire [7:0] byte_reg;
@@ -113,7 +113,7 @@ module byte_2_word
   /* byte_2_word.vhd:91:22  */
   assign n712_o = {byte_reg, byte_reg2};
   /* byte_2_word.vhd:55:9  */
-  assign n713_o = n678_o ? byte : byte_reg;
+  assign n713_o = n678_o ? byteee : byte_reg;
   /* byte_2_word.vhd:55:9  */
   always @(posedge clk or posedge rst)
     if (rst)
@@ -1099,7 +1099,7 @@ module boot_loader
     .clk(clk),
     .ce(ce),
     .byte_dv(rx_data_valid),
-    .byte(rx_byte),
+    .byteee(rx_byte),
     .word_dv(b2w_word_dv),
     .word(b2w_word));
   /* boot_loader.vhd:153:39  */
@@ -1124,7 +1124,7 @@ module boot_loader
     .word_dv(tx_data_valid),
     .word(ram_out),
     .byte_dv(w2b_byte_dv),
-    .byte(w2b_byte));
+    .byteee(w2b_byte));
   /* boot_loader.vhd:186:39  */
   assign n54_o = tx_cycle_count == 15'b100011001010000;
   /* boot_loader.vhd:190:54  */
