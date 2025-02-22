@@ -3,7 +3,7 @@ module byte_2_word
    input  clk,
    input  ce,
    input  byte_dv,
-   input  [7:0] byte,
+   input  [7:0] byteee,
    output word_dv,
    output [15:0] word);
   wire [7:0] byte_reg;
@@ -56,7 +56,7 @@ module byte_2_word
   /* byte_2_word.vhd:91:22  */
   assign n41_o = {byte_reg, byte_reg2};
   /* byte_2_word.vhd:55:9  */
-  assign n42_o = n7_o ? byte : byte_reg;
+  assign n42_o = n7_o ? byteee : byte_reg;
   /* byte_2_word.vhd:55:9  */
   always @(posedge clk or posedge rst)
     if (rst)
