@@ -1,9 +1,6 @@
 
 
-module boot_loader #(  
-    parameter RAM_ADR_WIDTH = 6,  
-    parameter RAM_SIZE = 64  
-)(  
+module boot_loader (  
     input wire rst,  
     input wire clk,  
     input wire ce,  
@@ -14,7 +11,7 @@ module boot_loader #(
     input wire [15:0] ram_out,  
     output reg ram_rw,  
     output reg ram_enable,  
-    output reg [RAM_ADR_WIDTH-1:0] ram_adr,  
+    output reg [5:0] ram_adr,  
     output reg [15:0] ram_in  
 );
 
@@ -22,7 +19,7 @@ module boot_loader #(
 wire [7:0] rx_byte, tx_byte;
 reg rx_data_valid, tx_data_valid, tx_word_valid, rx_word_valid;
 reg [1:0] byte_count;
-reg [RAM_ADR_WIDTH-1:0] rx_byte_count;
+reg [5:0] rx_byte_count;
 reg enable_rx_byte_counter, init_byte_counter;
 reg [14:0] tx_cycle_count;
 reg init_tx_cycle_count, tx_cycle_count_over;
@@ -92,7 +89,7 @@ always @(posedge clk or posedge rst) begin
         if (init_byte_counter)
             rx_byte_count <= 0;
         else if (enable_rx_byte_counter)
-            rx_byte_count <= (rx_byte_count == RAM_SIZE - 1) ? 0 : rx_byte_count + 1;
+            rx_byte_count <= (rx_byte_count == 63) ? 0 : rx_byte_count + 1;
     end
 end
 
@@ -128,11 +125,11 @@ always @* begin
     case (current_state)
         INIT: future_state = WAIT_RX_BYTE;
         WAIT_RX_BYTE: future_state = (rx_word_valid) ? WRITE_RX_BYTE : WAIT_RX_BYTE;
-        WRITE_RX_BYTE: future_state = (rx_byte_count == RAM_SIZE - 1) ? WAIT_SCAN_MEM : INCR_RX_BYTE_COUNTER;
+        WRITE_RX_BYTE: future_state = (rx_byte_count == 63) ? WAIT_SCAN_MEM : INCR_RX_BYTE_COUNTER;
         INCR_RX_BYTE_COUNTER: future_state = WAIT_RX_BYTE;
         WAIT_SCAN_MEM: future_state = (scan_memory) ? READ_TX_BYTE : WAIT_SCAN_MEM;
         READ_TX_BYTE: future_state = ENABLE_TX;
-        ENABLE_TX: future_state = (rx_byte_count == RAM_SIZE - 1) ? OVER : INCR_TX_BYTE_COUNTER;
+        ENABLE_TX: future_state = (rx_byte_count == 63) ? OVER : INCR_TX_BYTE_COUNTER;
         INCR_TX_BYTE_COUNTER: future_state = WAIT_8K_CYCLE;
         WAIT_8K_CYCLE: future_state = (tx_cycle_count_over) ? READ_TX_BYTE : WAIT_8K_CYCLE;
         OVER: future_state = OVER;
